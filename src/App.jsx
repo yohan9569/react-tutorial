@@ -1,33 +1,19 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import reactLogo from '@/assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
+import '@/App.css'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
+    // <React.Fragment></React.Fragment> == <Fragment></Fragment> == <></>
+    // jsx는 무조건 하나의 태그만 있어야 해. 그래서 최상단 껍데기 둠.
+    // jsx 내부에서 js 문법 -> 무조건 {} 중괄호.
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>{count}</div>
+      <button onClick={(e) => setCount(count + 1)}>증가</button>
+      <button onClick={(e) => setCount(count - 1)}>감소</button>
     </>
   )
 }
