@@ -2,25 +2,19 @@ import '@/App.css'
 import { useState } from 'react'
 
 function App() {
-  const [level, setLevel] = useState(1)
-  const [title, setTitle] = useState('Novice')
+  const [age, setAge] = useState(0)
+  const [valid, setValid] = useState(false)
 
-  const levelUp = () => {
-    setLevel((previous) => {
-      const newVal = previous + 1
-
-      if (newVal == 30) setTitle('2차 전직')
-      else if (newVal == 15) setTitle('1차 전직')
-
-      return newVal
-    })
+  const handleInput = (e) => {
+    const input = e.currentTarget.value
+    setAge(input)
+    setValid(input >= 19)
   }
 
   return (
     <>
-      <div style={{ marginBottom: 10 }}>{level}</div>
-      <div style={{ marginBottom: 10 }}>{title}</div>
-      <button onClick={levelUp}>레벨업!</button>
+      <input type='number' value={age} onChange={handleInput} />
+      {valid ? <div>성년</div> : <div>미성년</div>}
     </>
   )
 }
