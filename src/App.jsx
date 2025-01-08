@@ -1,41 +1,67 @@
 /*
-[**실습 4] : 앞선 `state` 와 `setState` 예시에서 `count` 와 `button` 두 개 각각 컴포넌트 만들어보자**
-
-- 아래의 코드에서 `count` 를 포함한 `<div>` 를 리액트 함수형 컴포넌트로 만들어라
-- 아래의 코드에서 `<button>` 를 리액트 함수형 컴포넌트로 만들어라
-    1. 증가 버튼과 감소 버튼 각각 다른 컴포넌트로 만들어라
-    2. 단일 버튼 컴포넌트를 만들어서 각각 증가와 감소 버튼으로 활용해보아라
+[실습 6] : 아이템 리스트를 통해 부모-자식 컴포넌트 분리하기
+  1. 리스트-아이템 → 부모-자식 컴포넌트로 분리 : Props 객체 내 children 프로퍼티 활용
+  2. 최상위 부모에서 리스트에 아이템 전달
+  3. 사람 객체 아이템 정보를 리스트 아이템의 Props 로 전달
+  4. 수정 가능한 아이템 - 활성화 상태에 따른 <input/> 폼 등장 및 이벤트 버블링 버그
+  5. 최상위 부모에서 리스트에 아이템 SetState 전달
+  **주의: Single Source of Truth 원칙**
 */
 
 import '@/App.css'
 import { useState } from 'react'
 
-function CountCompo({ count }) {
-  // React 컴포넌트는 대문자로 시작해야 한다!
-  return <div style={{ marginBottom: 10 }}>{count}</div>
+function ListItem({ name, age, desc, setDesc }) {
+  const [isEditing, setIsEditing] = useState(false)
+  return (
+    <li style={{ textAlign: 'left' }}>
+      {name} | {age} |{' '}
+      {isEditing ? (
+        <input
+          value={desc}
+          onChange={(e) => setDesc(e.currentTarget.value)}
+          onKeyDown={(e) => e.key === 'Enter' && setIsEditing((prev) => !prev)}
+        ></input>
+      ) : (
+        <span onClick={() => setIsEditing((prev) => !prev)}>{desc}</span>
+      )}
+    </li>
+  )
 }
 
-function ButtonCompo({ onClick, children, className }) {
+function ListCompo({ tag: Tag, items, setItems }) {
   return (
-    <button className={className} onClick={onClick}>
-      {children}
-    </button>
+    <Tag>
+      {items.map(({ name, age, desc }, idx) => (
+        <ListItem
+          key={idx}
+          name={name}
+          age={age}
+          desc={desc}
+          setDesc={(input) => {
+            const newItems = [...items]
+            newItems[idx].desc = input
+            setItems(newItems)
+          }}
+        />
+      ))}
+    </Tag>
   )
 }
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [items, setItems] = useState([
+    { name: 'Aaron', age: 10, desc: '안녕하세요' },
+    { name: 'Baron', age: 30, desc: '반갑습니다' },
+    { name: 'Caron', age: 22, desc: '처음뵙겠습니다' },
+    { name: 'Daron', age: 17, desc: '보고싶었습니다' },
+  ])
 
   return (
     <>
-      <CountCompo count={count} />
-      <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-        <ButtonCompo onClick={() => setCount((prev) => prev + 1)} className='up-button'>
-          증가
-        </ButtonCompo>
-        <ButtonCompo onClick={() => setCount((prev) => prev - 1)} className='down-button'>
-          감소
-        </ButtonCompo>
+      <div>
+        <ListCompo tag='ul' items={items} setItems={setItems} />
+        <ListCompo tag='ol' items={items} setItems={setItems} />
       </div>
     </>
   )
