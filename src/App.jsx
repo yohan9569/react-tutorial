@@ -15,12 +15,12 @@ function CountCompo({ count }) {
   return <div style={{ marginBottom: 10 }}>{count}</div>
 }
 
-function UpButton({ setCount }) {
-  return <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
-}
-
-function DownButton({ setCount }) {
-  return <button onClick={() => setCount((prev) => prev - 1)}>감소</button>
+function ButtonCompo({ onClick, children, className }) {
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
+  )
 }
 
 function App() {
@@ -30,8 +30,12 @@ function App() {
     <>
       <CountCompo count={count} />
       <div style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-        <UpButton setCount={setCount} />
-        <DownButton setCount={setCount} />
+        <ButtonCompo onClick={() => setCount((prev) => prev + 1)} className='up-button'>
+          증가
+        </ButtonCompo>
+        <ButtonCompo onClick={() => setCount((prev) => prev - 1)} className='down-button'>
+          감소
+        </ButtonCompo>
       </div>
     </>
   )
