@@ -1,27 +1,47 @@
 /*
-[실습 6] : 아이템 리스트를 통해 부모-자식 컴포넌트 분리하기
-  1. 리스트-아이템 → 부모-자식 컴포넌트로 분리 : Props 객체 내 children 프로퍼티 활용
-  2. 최상위 부모에서 리스트에 아이템 전달
-  3. 사람 객체 아이템 정보를 리스트 아이템의 Props 로 전달
-  4. 수정 가능한 아이템 - 활성화 상태에 따른 <input/> 폼 등장 및 이벤트 버블링 버그
-  5. 최상위 부모에서 리스트에 아이템 SetState 전달
-  **주의: Single Source of Truth 원칙**
+[실습 7] : Enter 키보드가 아닌 확인/취소 버튼을 통해 수정한 내용을 적용할지말지 선택 가능하도록
+  Single Source of Truth 원칙 예 → 실습 6 에 이어서 desc 수정 확인 로직 추가
+  확인 / 취소 버튼을 통해 실제 업데이트 되는 시점을 미루고 싶은 케이스 : 수정했다가 미적용 예
 */
 
 import '@/App.css'
 import { useState } from 'react'
 
+function InputCompo({ originalValue, confirmEdit, cancelEdit }) {
+  const [input, setInput] = useState(originalValue)
+  // 이건 Single Source of Truth 원칙을 어긴 게 아닌가요???
+
+  const doConfirm = () => {
+    const isConfirm = confirm(`"${input}" 으로 변경하시겠습니까?`)
+    if (isConfirm) confirmEdit(input) // 취소 누르면 계속 편집
+  }
+
+  return (
+    <>
+      <input value={input} onChange={(e) => setInput(e.currentTarget.value)}></input>
+      <button onClick={doConfirm}>수정</button>
+      <button onClick={cancelEdit}>취소</button>
+    </>
+  )
+}
+
 function ListItem({ name, age, desc, setDesc }) {
   const [isEditing, setIsEditing] = useState(false)
+
+  const confirmEdit = (confirmedValue) => {
+    setDesc(confirmedValue)
+    setIsEditing(false)
+  }
+
+  const cancelEdit = () => {
+    setIsEditing(false)
+  }
+
   return (
     <li style={{ textAlign: 'left' }}>
       {name} | {age} |{' '}
       {isEditing ? (
-        <input
-          value={desc}
-          onChange={(e) => setDesc(e.currentTarget.value)}
-          onKeyDown={(e) => e.key === 'Enter' && setIsEditing((prev) => !prev)}
-        ></input>
+        <InputCompo originalValue={desc} confirmEdit={confirmEdit} cancelEdit={cancelEdit} />
       ) : (
         <span onClick={() => setIsEditing((prev) => !prev)}>{desc}</span>
       )}
@@ -31,6 +51,7 @@ function ListItem({ name, age, desc, setDesc }) {
 
 function ListCompo({ tag: Tag, items, setItems }) {
   return (
+    // ul / ol 선택 가능
     <Tag>
       {items.map(({ name, age, desc }, idx) => (
         <ListItem
