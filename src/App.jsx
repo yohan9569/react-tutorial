@@ -1,10 +1,12 @@
 /*
 실습 12 : Ref 와 State 를 조합하여, 유효성 검증에 따른 포커스까지 도입하여 회원가입 페이지 만들기
-[12-4] 유효성 검증을 위한 상태 단일화 (불변성 객체로 인한 리렌더 이슈) -> onChange 마다 새 객체로 setState
+[12-5] immer: 객체 상태 내 프로퍼티 단위 불변성 보장으로 리렌더 이슈 수정
+npm install immer --save: immer package.json dependencies 자동 추가, -lock도 반영.
 */
 
 import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
+import { produce } from 'immer'
 
 function IdInput() {
   return (
@@ -14,13 +16,13 @@ function IdInput() {
   )
 }
 
-function PwInput() {
-  const reference = useRef()
+function PwInput({ setChecked }) {
   const [valid, setValid] = useState({
     required: false,
     min: false,
     max: true,
   })
+  const reference = useRef() //순서에 대한 공식 규칙은 없지만, useState → useRef → 기타 훅의 순서를 많이 따릅니다.
 
   function changType(e) {
     if (reference.current.type === 'password') {
@@ -42,11 +44,13 @@ function PwInput() {
         ref={reference}
         onChange={(e) => {
           const length = e.target.value.length
-          setValid({
-            required: length !== 0,
-            min: length > 8,
-            max: length < 20,
+          const changed = produce(valid, (draft) => {
+            draft.required = length !== 0
+            draft.min = length > 8
+            draft.max = length < 20
           })
+          setValid(changed)
+          setChecked(changed.required && changed.min && changed.max)
         }}
       />
       <button onClick={changType}>보이기</button>
@@ -58,14 +62,15 @@ function PwInput() {
 }
 
 function App() {
+  const [checked, setChecked] = useState(false)
   console.log('APP- rerendered')
   function registration() {}
 
   return (
     <>
       <IdInput />
-      <PwInput />
-      <button onClick={registration}>회원가입</button>
+      <PwInput setChecked={setChecked} />
+      {checked && <button onClick={registration}>회원가입</button>}
     </>
   )
 }
