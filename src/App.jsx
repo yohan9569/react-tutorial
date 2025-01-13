@@ -1,27 +1,37 @@
 /*
-실습 11 : 렌더링 없이도 ref 를 통해 DOM 조작이 가능하다는것을 직접 코드를 통해 이해해보자
-[실습 11-3] useRef 통한 <video> 태그 DOM(HTML 요소) 영상 소스 변경
+실습 12 : Ref 와 State 를 조합하여, 유효성 검증에 따른 포커스까지 도입하여 회원가입 페이지 만들기
+실습 12-1: 아이디/패스워드 입력 컴포넌트 생성
 */
 
 import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
 
-function App() {
-  const sourceRef = useRef()
+function IdInput() {
+  return (
+    <div>
+      ID: <input />
+    </div>
+  )
+}
 
-  const sources = [
-    'https://vjs.zencdn.net/v/oceans.mp4',
-    'https://lamberta.github.io/html5-animation/examples/ch04/assets/movieclip.mp4',
-  ]
+function PwInput() {
+  return (
+    <div>
+      PW: <input />
+      <button>보이기</button>
+    </div>
+  )
+}
+
+function App() {
   console.log('- rerendered')
+  function registration() {}
 
   return (
     <>
-      <video autoPlay controls width={500} ref={sourceRef} />
-      <div>
-        <button onClick={() => (sourceRef.current.src = sources[0])}>전환 1</button>
-        <button onClick={() => (sourceRef.current.src = sources[1])}>전환 2</button>
-      </div>
+      <IdInput />
+      <PwInput />
+      <button onClick={registration}>회원가입</button>
     </>
   )
 }
