@@ -4,6 +4,7 @@
 */
 
 import { useState, useRef } from 'react'
+import '@/App.css'
 
 function App() {
   const [valid, setValid] = useState(false)
