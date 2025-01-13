@@ -1,11 +1,14 @@
 /*
-[실습 10-3] 부모 컴포넌트에서 모든 useRef 를 갖고 일괄 제출 (forwardRef 버그)
+[실습 10-4] 함수형 컴포넌트에선 forwardRef 가 필수
 */
 
-import { useState, useRef } from 'react'
+import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
 
-function FormWithValidation({ label, required = false, length = undefined }, reference) {
+const FormWithValidation = forwardRef(function FormWithValidation(
+  { label, required = false, length = undefined },
+  reference,
+) {
   const [requiredValid, setRequiredValid] = useState(true)
   const [lengthValid, setLengthValid] = useState(true)
 
@@ -32,7 +35,7 @@ function FormWithValidation({ label, required = false, length = undefined }, ref
       </div>
     </>
   )
-}
+})
 
 function App() {
   const references = {
