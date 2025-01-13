@@ -1,38 +1,41 @@
 /*
-[실습 13-1] : 
+Props Drilling 문제 예시
 */
 
-import '@/App.css'
+import React, { useState } from 'react'
+import './App.css'
 
-function Header() {
-  return <div style={{ position: 'sticky', top: 0, height: 60, backgroundColor: 'white' }}></div>
+function ThirdCompo({ count }) {
+  return <>Count is {count}</>
 }
 
-function Title({ title }) {
-  return <h3>{title}</h3>
+function SecondCompo({ count }) {
+  return <ThirdCompo count={count} />
 }
 
-function Content({ content }) {
-  return <div>{content}</div>
+function FirstCompo({ count }) {
+  return <SecondCompo count={count} />
 }
 
-function Post() {
-  const title = 'Lorem ipsum'
-  const content =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim'
-  return (
-    <div>
-      <Title title={title} />
-      <Content content={content} />
-    </div>
-  )
+function NonContextComponent({ count }) {
+  return <div>Count is {count}</div>
 }
 
 function App() {
+  const [count, setCount] = useState(0)
+
   return (
     <>
-      <Header />
-      <Post />
+      <h1>Vite + React</h1>
+      <div className='card'>
+        <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
+        <div className='in-provide'>
+          <FirstCompo count={count} />
+        </div>
+        <div className='outside-provide'>
+          <NonContextComponent count={count} />
+        </div>
+      </div>
     </>
   )
 }
