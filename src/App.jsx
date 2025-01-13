@@ -1,67 +1,19 @@
 /*
-  18-1: useContext 통해 다크 / 라이트 테마에 따른 스타일 변경
+[실습 9] : State 를 활용한 <input/> 과 Ref 를 활용한 <input/> 차이 : React 리렌더링 미발생
+- setValid 로 valid 가 변경될 때만 리렌더링
 */
 
-import { useState, createContext, useContext, useEffect } from 'react'
-import './App.css'
-
-const THEME = {
-  DEFAULT: 'system',
-  DARK: 'dark',
-  LIGHT: 'light',
-}
-
-const ThemeContext = createContext({
-  // default value
-  theme: THEME.DEFAULT,
-  setTheme: (state) => {}, // type 추론 때문에, parameter 맞춰줘야 함.
-})
-
-function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(THEME.DEFAULT)
-
-  useEffect(() => {
-    // theme 관련 css 변경 로직
-    console.log(theme)
-    switch (theme) {
-      case THEME.DARK:
-        document.body.classList.add('dark')
-        break
-      case THEME.LIGHT:
-        document.body.classList.remove('dark')
-        break
-      case THEME.DEFAULT:
-      default:
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? document.body.classList.add('dark')
-          : document.body.classList.remove('dark')
-        break
-    }
-  }, [theme])
-
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
-}
-
-function ThemeSelect() {
-  const { theme, setTheme } = useContext(ThemeContext)
-  return (
-    <select defaultValue={theme} onChange={(e) => setTheme(e.target.value)}>
-      {Object.entries(THEME).map((entry, index) => (
-        <option key={entry[0]} value={entry[1]}>
-          {entry[1]}
-        </option>
-      ))}
-    </select>
-  )
-}
+import { useState, useRef } from 'react'
 
 function App() {
+  const [valid, setValid] = useState(false)
+  const ageRef = useRef()
+
+  console.log('rendered')
   return (
     <>
-      <ThemeProvider>
-        <h3>Theme</h3>
-        <ThemeSelect />
-      </ThemeProvider>
+      <input ref={ageRef} type='number' onChange={(e) => setValid(Number(e.target.value) >= 19)} />
+      {valid ? <div>성년입니다.</div> : <div style={{ color: 'red' }}>미성년입니다.</div>}
     </>
   )
 }
