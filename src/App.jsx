@@ -1,89 +1,39 @@
 /*
-[실습 12-2] : FormWithValidation 중앙화, forwardRef 사용.
+[실습 13-1] : 
 */
 
-import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
 
-function UsernameInput() {
+function Header() {
+  return <div style={{ position: 'sticky', top: 0, height: 60, backgroundColor: 'white' }}></div>
+}
+
+function Title({ title }) {
+  return <h3>{title}</h3>
+}
+
+function Content({ content }) {
+  return <div>{content}</div>
+}
+
+function Post() {
+  const title = 'Lorem ipsum'
+  const content =
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim'
   return (
     <div>
-      Username : <input />
+      <Title title={title} />
+      <Content content={content} />
     </div>
   )
 }
-
-function PasswordInput() {
-  const reference = useRef(null)
-  return (
-    <div>
-      Password : <input type='password' ref={reference} />
-    </div>
-  )
-}
-
-const FormWithValidation = forwardRef(function FormWithValidation(
-  { name, length, required = false },
-  reference,
-) {
-  const [requiredValid, setRequiredValid] = useState(true)
-  const [lengthValid, setLengthValid] = useState(true)
-
-  console.log(' - rendered! : FormWithValidation')
-
-  return (
-    <div>
-      {name} :{' '}
-      <input
-        ref={reference}
-        type={name === 'Password' && 'password'}
-        onChange={(e) => {
-          const input = e.target.value
-          if (required) {
-            setRequiredValid(input.length > 0)
-          }
-          if (length) {
-            setLengthValid(input.length <= length)
-          }
-        }}
-      />
-      {name === 'Password' && (
-        <button
-          onClick={(e) => {
-            console.log('버튼 클릭')
-            if (reference.current.type === 'password') {
-              e.currentTarget.innerText = '감추기'
-              reference.current.type = 'text'
-            } else {
-              e.currentTarget.innerText = '🔓 보이기'
-              reference.current.type = 'password'
-            }
-          }}
-        >
-          🔓 보이기
-        </button>
-      )}
-      {!requiredValid && <div style={{ color: 'red' }}>필수값</div>}
-      {!lengthValid && <div style={{ color: 'red' }}>{length} 이하</div>}
-    </div>
-  )
-})
 
 function App() {
-  const nameReference = useRef(null)
-  const passwordReference = useRef(null)
-
-  function registration() {}
-
   return (
-    <section style={{ textAlign: 'start', width: 400 }}>
-      {/* <UsernameInput />
-      <PasswordInput /> */}
-
-      <FormWithValidation ref={nameReference} name={'Username'} length={10} />
-      <FormWithValidation ref={passwordReference} name={'Password'} length={8} required={true} />
-      <button onClick={registration}>회원가입 완료</button>
-    </section>
+    <>
+      <Header />
+      <Post />
+    </>
   )
 }
 
