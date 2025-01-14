@@ -1,9 +1,9 @@
 /*
 실습 13 : Ref 활용하여, 블로그에서 글 읽을때 어떤 제목의 글인지 상단 내비게이션 헤더에 제목 표기
-[13-2] 헤더 내 텍스트 추가
+[13-3] DOM 에 Observer 부착을 위해 useRef 로 DOM 지정
 */
 
-import { useState, useRef, forwardRef } from 'react'
+import { useState, useRef, forwardRef, useEffect } from 'react'
 import '@/App.css'
 import { produce } from 'immer'
 
@@ -18,7 +18,13 @@ function Header({ title }) {
 }
 
 function Title({ title }) {
-  return <h3>{title}</h3>
+  const titleRef = useRef(null)
+
+  useEffect(() => {
+    console.log(titleRef.current)
+  })
+
+  return <h3 ref={titleRef}>{title}</h3>
 }
 
 function Content({ content }) {
