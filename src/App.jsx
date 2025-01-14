@@ -1,6 +1,6 @@
 /*
 실습 17 : Props Drilling 이슈 해결을 위한 Context API 사용 : Create → Provider → Consumer
-[17-3] App 최상단 부모 컴포넌트 내 State 를 Provider 컴포넌트로 이관
+[17-4] 불필요한 컴포넌트 단위의 리렌더 방지를 위한 Consumer 사용
 */
 
 import { useState, createContext, useContext } from 'react'
@@ -16,12 +16,12 @@ function LC() {
 }
 
 function TC() {
-  // useContext 사용 시, 상태 바뀌면 자식 컴포넌트도 리렌더됨.
-  const { count } = useContext(countContext)
+  // Consumer 사용 시, 자식 컴포넌트 리렌더 안 됨. + 본인도 안 됨.
+  // const { count } = useContext(countContext)
   console.log('- A.3. Third Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
-      Third Component : {count}
+      Third Component :<countContext.Consumer>{({ count }) => <>{count}</>}</countContext.Consumer>
       <LC />
     </div>
   )
@@ -48,13 +48,15 @@ function FC() {
 }
 
 function ButtonComponent() {
-  const { setCount } = useContext(countContext)
+  // const { setCount } = useContext(countContext)
   console.log('- B. Button Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
       Button Component
       <div>
-        <button onClick={() => setCount((prev) => prev + 1)}>증가</button>
+        <countContext.Consumer>
+          {({ setCount }) => <button onClick={() => setCount((prev) => prev + 1)}>증가</button>}
+        </countContext.Consumer>
       </div>
     </div>
   )
