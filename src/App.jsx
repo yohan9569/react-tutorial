@@ -1,6 +1,6 @@
 /*
 실습 16 : useState 대신 useReduce 활용하여 State 상태변경 방법 제약두기 및 복잡한 전이 중앙화
-[16-3]  useReducer 공식 명칭 사용 : reducer, previousState, action
+[16-4] action 에 type, payload 전달
 */
 
 import { useState, useReducer } from 'react'
@@ -16,9 +16,9 @@ import '@/App.css'
 function reducer(prevState, action) {
   switch (action?.type) {
     case 'INCREASE10':
-      return prevState + 10
+      return prevState + action?.payload
     case 'DECREASE10':
-      return prevState - 10
+      return prevState - action?.payload
     default:
       throw new Error('없어용')
   }
@@ -31,8 +31,8 @@ function App() {
   return (
     <>
       <div>{count}</div>
-      <button onClick={() => dispatch({ type: 'INCREASE10' })}>증가</button>
-      <button onClick={() => dispatch({ type: 'DECREASE10' })}>감소</button>
+      <button onClick={() => dispatch({ type: 'INCREASE10', payload: 5 })}>증가</button>
+      <button onClick={() => dispatch({ type: 'DECREASE10', payload: 8 })}>감소</button>
     </>
   )
 }
