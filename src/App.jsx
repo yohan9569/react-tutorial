@@ -1,9 +1,9 @@
 /*
 실습 17 : Props Drilling 이슈 해결을 위한 Context API 사용 : Create → Provider → Consumer
-[17-1] Props Drilling 및 State 사용처(View) 및 변경처(Controller) 분리
+[17-2] Context 정의 및 Provider 영역 설정 후 Props Drilling은 해결 (리렌더 이슈)
 */
 
-import { useState, useReducer } from 'react'
+import { useState, createContext, useContext } from 'react'
 import '@/App.css'
 
 function LC() {
@@ -15,7 +15,8 @@ function LC() {
   )
 }
 
-function TC({ count }) {
+function TC() {
+  const count = useContext(countContext)
   console.log('- A.3. Third Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
@@ -25,22 +26,22 @@ function TC({ count }) {
   )
 }
 
-function SC({ count }) {
+function SC() {
   console.log('- A.2. Second Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
       Second Component
-      <TC count={count} />
+      <TC />
     </div>
   )
 }
 
-function FC({ count }) {
+function FC() {
   console.log('- A.1. First Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
       First Component
-      <SC count={count} />
+      <SC />
     </div>
   )
 }
@@ -57,7 +58,9 @@ function ButtonComponent({ onClick }) {
   )
 }
 
-function NonContextComponent({ count }) {
+function NonContextComponent() {
+  // Provider 밖의 컴포넌트라서, useContext 사용해도 default value.
+  const count = useContext(countContext)
   console.log('- C. Non-Context Component')
   return (
     <div className='component-box' style={{ padding: 10 }}>
@@ -66,8 +69,13 @@ function NonContextComponent({ count }) {
   )
 }
 
+// 컴포넌트 외부에서 생성
+const defaultValue = -10
+const countContext = createContext(defaultValue)
+
 function App() {
   const [count, setCount] = useState(0)
+
   return (
     <div
       className='section-box'
@@ -79,9 +87,11 @@ function App() {
         padding: 10,
       }}
     >
-      <FC count={count} />
-      <ButtonComponent onClick={() => setCount((prev) => prev + 1)} />
-      <NonContextComponent count={count} />
+      <countContext.Provider value={count}>
+        <FC />
+        <ButtonComponent onClick={() => setCount((prev) => prev + 1)} />
+      </countContext.Provider>
+      <NonContextComponent />
     </div>
   )
 }
