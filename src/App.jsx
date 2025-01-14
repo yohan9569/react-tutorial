@@ -1,22 +1,38 @@
 /*
 실습 16 : useState 대신 useReduce 활용하여 State 상태변경 방법 제약두기 및 복잡한 전이 중앙화
-[16-1] useState 사용 시 상태 변경 경우의 수 무제한 이슈
+[16-3]  useReducer 공식 명칭 사용 : reducer, previousState, action
 */
 
-import { useState } from 'react'
+import { useState, useReducer } from 'react'
 import '@/App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// /** 치고 엔터: VSCode 에서 함수 위에 /** 작성 후 엔터를 치면 자동완성으로 위와 같이 JSDoc 이 작성된다
+/**
+ *
+ * @param {*} prevState
+ * @param {*} action
+ * @returns
+ */
+function reducer(prevState, action) {
+  switch (action?.type) {
+    case 'INCREASE10':
+      return prevState + 10
+    case 'DECREASE10':
+      return prevState - 10
+    default:
+      throw new Error('없어용')
+  }
+}
 
-  // 상태 변경 경우의 수 2개 : 10 증가, 10 감소 => 만약에 count 를 무조건 10씩 증가 혹은 감소만하고싶다면?
-  //  - 문제점 : setCount 는 넣는값마다 다 변경할 수 있다는 "자율성"
-  //  - 내가 원하는것 : count 상태 변경에 제약을 두가지 경우의 수로만
+function App() {
+  const [count, dispatch] = useReducer(reducer, 0)
+
+  console.log('rendered')
   return (
     <>
       <div>{count}</div>
-      <button onClick={() => setCount((prev) => prev + 10)}>증가</button>
-      <button onClick={() => setCount((prev) => prev - 10)}>감소</button>
+      <button onClick={() => dispatch({ type: 'INCREASE10' })}>증가</button>
+      <button onClick={() => dispatch({ type: 'DECREASE10' })}>감소</button>
     </>
   )
 }
