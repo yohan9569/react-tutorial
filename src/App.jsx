@@ -1,113 +1,59 @@
 /*
-실습 17 : Props Drilling 이슈 해결을 위한 Context API 사용 : Create → Provider → Consumer
-[17-4] 불필요한 컴포넌트 단위의 리렌더 방지를 위한 Consumer 사용
+실습 18 : Context API 통해 다크 / 라이트 테마에 따른 스타일 변경 및 localStorage 및 이벤트 활용
+[18-1] useContext 통해 다크 / 라이트 테마에 따른 스타일 변경
 */
 
-import { useState, createContext, useContext } from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import '@/App.css'
 
-function LC() {
-  console.log('- A.4. Fourth Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      Fourth Component
-    </div>
-  )
+const THEME = {
+  DEFAULT: 'system',
+  DARK: 'dark',
+  LIGHT: 'light',
 }
 
-function TC() {
-  // Consumer 사용 시, 자식 컴포넌트 리렌더 안 됨. + 본인도 안 됨.
-  // const { count } = useContext(countContext)
-  console.log('- A.3. Third Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      Third Component :<countContext.Consumer>{({ count }) => <>{count}</>}</countContext.Consumer>
-      <LC />
-    </div>
-  )
+const themeContext = createContext({ theme: THEME.DEFAULT, setTheme: (state) => {} })
+
+function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState(THEME.DEFAULT)
+
+  useEffect(() => {
+    if (theme === THEME.DEFAULT) {
+      window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? document.body.classList.add('dark')
+        : document.body.classList.remove('dark')
+    }
+    if (theme === THEME.DARK) {
+      document.body.classList.add('dark')
+    }
+    if (theme === THEME.LIGHT) {
+      document.body.classList.remove('dark')
+    }
+  }, [theme])
+
+  return <themeContext.Provider value={{ theme, setTheme }}>{children}</themeContext.Provider>
 }
 
-function SC() {
-  console.log('- A.2. Second Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      Second Component
-      <TC />
-    </div>
-  )
-}
-
-function FC() {
-  console.log('- A.1. First Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      First Component
-      <SC />
-    </div>
-  )
-}
-
-function ButtonComponent() {
-  // const { setCount } = useContext(countContext)
-  console.log('- B. Button Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      Button Component
-      <div>
-        <countContext.Consumer>
-          {({ setCount }) => <button onClick={() => setCount((prev) => prev + 1)}>증가</button>}
-        </countContext.Consumer>
-      </div>
-    </div>
-  )
-}
-
-function NonContextComponent() {
-  // Provider 밖의 컴포넌트라서, useContext 사용해도 default value.
-  const { count } = useContext(countContext)
-  console.log('- C. Non-Context Component')
-  return (
-    <div className='component-box' style={{ padding: 10 }}>
-      Non-Context Component : {count}
-    </div>
-  )
-}
-
-// 컴포넌트 외부에서 생성
-const defaultValue = -10
-const countContext = createContext({ count: defaultValue, setCount: (state) => {} })
-
-// Provider 설정을 위한 컴포넌트
-function ContextProvider({ children }) {
-  const [count, setCount] = useState(0)
-
-  console.log('- A.0. ContextProvider Component')
+function ThemeSelect() {
+  const { theme, setTheme } = useContext(themeContext)
 
   return (
-    <>
-      <countContext.Provider value={{ count, setCount }}>{children}</countContext.Provider>
-    </>
+    <select defaultValue={theme} onChange={(e) => setTheme(e.target.value)}>
+      {Object.values(THEME).map((option, idx) => (
+        <option key={idx} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
   )
 }
 
 function App() {
   return (
-    <div
-      className='section-box'
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 16,
-        padding: 10,
-      }}
-    >
-      <ContextProvider>
-        <FC />
-        <ButtonComponent />
-      </ContextProvider>
-      <NonContextComponent />
-    </div>
+    <ThemeProvider>
+      <h1>Theme</h1>
+      <ThemeSelect />
+    </ThemeProvider>
   )
 }
 
