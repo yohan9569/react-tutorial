@@ -49,6 +49,7 @@ function PwInput({ setChecked }) {
             draft.min = length > 8
             draft.max = length < 20
           })
+          console.log(changed === valid) // 속성들 변화 없으면, true로 나온다.
           setValid(changed)
           setChecked(changed.required && changed.min && changed.max)
         }}
