@@ -1,14 +1,11 @@
 /*
-[실습 10-4] 함수형 컴포넌트에선 forwardRef 가 필수
+[실습 10-??] forwardRef 없이 props로 전달 가능???
 */
 
 import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
 
-const FormWithValidation = forwardRef(function FormWithValidation(
-  { label, required = false, length = undefined },
-  reference,
-) {
+function FormWithValidation({ label, required = false, length = undefined, reference }) {
   const [requiredValid, setRequiredValid] = useState(true)
   const [lengthValid, setLengthValid] = useState(true)
 
@@ -35,7 +32,7 @@ const FormWithValidation = forwardRef(function FormWithValidation(
       </div>
     </>
   )
-})
+}
 
 function App() {
   const references = {
@@ -55,9 +52,9 @@ function App() {
   console.log('App - rerendered')
   return (
     <>
-      <FormWithValidation ref={references.name} label='이름' required={true} length={10} />
-      <FormWithValidation ref={references.desc} label='설명' length={20} />
-      <FormWithValidation ref={references.mail} label='메일' required />{' '}
+      <FormWithValidation reference={references.name} label='이름' required={true} length={10} />
+      <FormWithValidation reference={references.desc} label='설명' length={20} />
+      <FormWithValidation reference={references.mail} label='메일' required />{' '}
       {/* 값을 명시하지 않은 boolean props = true로 가정. 아예 언급 없으면 undefined*/}
       <button type='button'>제출</button>
     </>
