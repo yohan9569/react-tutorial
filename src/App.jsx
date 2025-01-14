@@ -1,6 +1,6 @@
 /*
 실습 18 : Context API 통해 다크 / 라이트 테마에 따른 스타일 변경 및 localStorage 및 이벤트 활용
-[18-2] localStorage 활용하여 다크 / 라이트 테마 저장 및 재사용
+[18-3] 운영체제에서 prefers-color-scheme 미디어 변경 이벤트 활용
 */
 
 import { useState, createContext, useContext, useEffect } from 'react'
@@ -14,14 +14,20 @@ const THEME = {
 
 const themeContext = createContext({ theme: THEME.DEFAULT, setTheme: (state) => {} })
 
+// 매 렌더링마다 재정의할 필요 없으니 밖으로 뺐음.
+function handleThemeChange(e) {
+  e.matches ? document.body.classList.add('dark') : document.body.classList.remove('dark')
+}
+
 function ThemeProvider({ children }) {
   const stored = localStorage.getItem('theme')
   const [theme, setTheme] = useState(stored ?? THEME.DEFAULT)
   // 저장된 값 있으면 그 값으로 초기화.
 
   useEffect(() => {
+    const themeMedia = window.matchMedia('(prefers-color-scheme: dark)')
     if (theme === THEME.DEFAULT) {
-      window.matchMedia('(prefers-color-scheme: dark)').matches
+      themeMedia.matches
         ? document.body.classList.add('dark')
         : document.body.classList.remove('dark')
       localStorage.setItem('theme', THEME.DEFAULT)
@@ -33,6 +39,12 @@ function ThemeProvider({ children }) {
     if (theme === THEME.LIGHT) {
       document.body.classList.remove('dark')
       localStorage.setItem('theme', THEME.LIGHT)
+    }
+
+    themeMedia.addEventListener('change', handleThemeChange)
+
+    return () => {
+      themeMedia.removeEventListener('change', handleThemeChange)
     }
   }, [theme])
 
