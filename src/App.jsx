@@ -1,39 +1,88 @@
 /*
-실습 16 : useState 대신 useReduce 활용하여 State 상태변경 방법 제약두기 및 복잡한 전이 중앙화
-[16-4] action 에 type, payload 전달
+실습 17 : Props Drilling 이슈 해결을 위한 Context API 사용 : Create → Provider → Consumer
+[17-1] Props Drilling 및 State 사용처(View) 및 변경처(Controller) 분리
 */
 
 import { useState, useReducer } from 'react'
 import '@/App.css'
 
-// /** 치고 엔터: VSCode 에서 함수 위에 /** 작성 후 엔터를 치면 자동완성으로 위와 같이 JSDoc 이 작성된다
-/**
- *
- * @param {*} prevState
- * @param {*} action
- * @returns
- */
-function reducer(prevState, action) {
-  switch (action?.type) {
-    case 'INCREASE10':
-      return prevState + action?.payload
-    case 'DECREASE10':
-      return prevState - action?.payload
-    default:
-      throw new Error('없어용')
-  }
+function LC() {
+  console.log('- A.4. Fourth Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      Fourth Component
+    </div>
+  )
+}
+
+function TC({ count }) {
+  console.log('- A.3. Third Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      Third Component : {count}
+      <LC />
+    </div>
+  )
+}
+
+function SC({ count }) {
+  console.log('- A.2. Second Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      Second Component
+      <TC count={count} />
+    </div>
+  )
+}
+
+function FC({ count }) {
+  console.log('- A.1. First Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      First Component
+      <SC count={count} />
+    </div>
+  )
+}
+
+function ButtonComponent({ onClick }) {
+  console.log('- B. Button Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      Button Component
+      <div>
+        <button onClick={onClick}>증가</button>
+      </div>
+    </div>
+  )
+}
+
+function NonContextComponent({ count }) {
+  console.log('- C. Non-Context Component')
+  return (
+    <div className='component-box' style={{ padding: 10 }}>
+      Non-Context Component : {count}
+    </div>
+  )
 }
 
 function App() {
-  const [count, dispatch] = useReducer(reducer, 0)
-
-  console.log('rendered')
+  const [count, setCount] = useState(0)
   return (
-    <>
-      <div>{count}</div>
-      <button onClick={() => dispatch({ type: 'INCREASE10', payload: 5 })}>증가</button>
-      <button onClick={() => dispatch({ type: 'DECREASE10', payload: 8 })}>감소</button>
-    </>
+    <div
+      className='section-box'
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 16,
+        padding: 10,
+      }}
+    >
+      <FC count={count} />
+      <ButtonComponent onClick={() => setCount((prev) => prev + 1)} />
+      <NonContextComponent count={count} />
+    </div>
   )
 }
 
