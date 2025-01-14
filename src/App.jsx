@@ -1,14 +1,20 @@
 /*
 실습 13 : Ref 활용하여, 블로그에서 글 읽을때 어떤 제목의 글인지 상단 내비게이션 헤더에 제목 표기
-[13-1] 블로그 포스트 페이지 내 컴포넌트 분리, Props 로 컴포넌트 재사용성 개선
+[13-2] 헤더 내 텍스트 추가
 */
 
 import { useState, useRef, forwardRef } from 'react'
 import '@/App.css'
 import { produce } from 'immer'
 
-function Header() {
-  return <div style={{ position: 'sticky', top: 0, height: 60, backgroundColor: 'white' }}></div>
+function Header({ title }) {
+  return (
+    <div
+      style={{ position: 'sticky', top: 0, height: 60, backgroundColor: 'white', color: 'black' }}
+    >
+      {title}
+    </div>
+  )
 }
 
 function Title({ title }) {
@@ -33,12 +39,30 @@ function App() {
     title: 'Lorem ipsum',
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, \
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+      Excepteur sint occaecat cupidatat non proident, \
+      sunt in culpa qui officia deserunt mollit anim id est laborum.\n\nLorem ipsum dolor sit amet, \
+      consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n\
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n\
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+      Ut enim ad minim',
   }
 
   return (
     <>
-      <Header />
+      <Header title={post.title} />
       <Post {...post} />
     </>
   )

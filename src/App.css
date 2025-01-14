@@ -36,7 +36,8 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
